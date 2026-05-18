@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "../../lib/cn";
+import { tv } from "tailwind-variants";
 
 import { PaymentIdleView } from "./PaymentIdleView";
 import { PaymentLoadingView } from "./PaymentLoadingView";
@@ -51,7 +51,54 @@ const PAYMENT_VIEW: Record<PaymentStatus, PaymentView> = {
   },
 };
 
-function PaymentCard({ className = "" }: { className: string }) {
+const paymentCardStyles = tv({
+  variants: {
+    status: {
+      idle: "border-slate-200 bg-white",
+      loading: "border-amber-300 bg-amber-50/70",
+      success: "border-emerald-300 bg-emerald-50/70",
+      error: "border-red-300 bg-red-50/70",
+    },
+  },
+});
+
+const labelStyles = tv({
+  base: "text-xs font-medium uppercase tracking-[0.12em]",
+  variants: {
+    status: {
+      idle: "text-slate-500",
+      loading: "text-amber-700",
+      success: "text-emerald-700",
+      error: "text-red-700",
+    },
+  },
+});
+
+const statusBadgeStyles = tv({
+  base: "rounded-full px-2.5 py-1 text-xs font-medium",
+  variants: {
+    status: {
+      idle: "bg-slate-100 text-slate-700",
+      loading: "bg-amber-100 text-amber-800",
+      success: "bg-emerald-100 text-emerald-800",
+      error: "bg-red-100 text-red-800",
+    },
+  },
+});
+
+const indicatorStyles = tv({
+  base: "inline-block size-2 rounded-full",
+  variants: {
+    status: {
+      idle: "bg-slate-400",
+      loading: "bg-amber-500",
+      success: "bg-emerald-500",
+      error: "bg-red-500",
+    },
+  },
+});
+
+function PaymentCard({ className = "" }: { className?: string }) {
   const [paymentStatus, setPaymentStatus] =
     React.useState<PaymentStatus>("idle");
   const [isViewingReceipt, setIsViewingReceipt] = React.useState(false);
@@ -78,26 +125,14 @@ function PaymentCard({ className = "" }: { className: string }) {
     <>
       <section
         data-state={paymentStatus}
-        className={cn(
-          "w-full max-w-md rounded-2xl border p-5 shadow-sm transition-colors",
-          "border-slate-200 bg-white",
-          "data-[state=loading]:border-amber-300 data-[state=loading]:bg-amber-50/70",
-          "data-[state=success]:border-emerald-300 data-[state=success]:bg-emerald-50/70",
-          "data-[state=error]:border-red-300 data-[state=error]:bg-red-50/70",
-          className,
-        )}
+        className={paymentCardStyles({
+          status: paymentStatus,
+          class: "w-full max-w-md rounded-2xl border p-5 shadow-sm transition-colors " + className,
+        })}
       >
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
-            <p
-              className={cn(
-                "text-xs font-medium uppercase tracking-[0.12em]",
-                "text-slate-500",
-                "in-data-[state=loading]:text-amber-700",
-                "in-data-[state=success]:text-emerald-700",
-                "in-data-[state=error]:text-red-700",
-              )}
-            >
+            <p className={labelStyles({ status: paymentStatus })}>
               {view.label}
             </p>
 
@@ -108,15 +143,7 @@ function PaymentCard({ className = "" }: { className: string }) {
             <p className="text-sm text-slate-600">{view.description}</p>
           </div>
 
-          <div
-            className={cn(
-              "rounded-full px-2.5 py-1 text-xs font-medium",
-              "bg-slate-100 text-slate-700",
-              "in-data-[state=loading]:bg-amber-100 in-data-[state=loading]:text-amber-800",
-              "in-data-[state=success]:bg-emerald-100 in-data-[state=success]:text-emerald-800",
-              "in-data-[state=error]:bg-red-100 in-data-[state=error]:text-red-800",
-            )}
-          >
+          <div className={statusBadgeStyles({ status: paymentStatus })}>
             {view.statusText}
           </div>
         </div>
@@ -132,14 +159,7 @@ function PaymentCard({ className = "" }: { className: string }) {
           <div className="mt-3 h-px bg-slate-200" />
 
           <div className="mt-3 flex items-center gap-2 text-sm text-slate-600">
-            <span
-              className={cn(
-                "inline-block size-2 rounded-full bg-slate-400",
-                "in-data-[state=loading]:bg-amber-500",
-                "in-data-[state=success]:bg-emerald-500",
-                "in-data-[state=error]:bg-red-500",
-              )}
-            />
+            <span className={indicatorStyles({ status: paymentStatus })} />
 
             <span>{PAYMENT_CONTENT.cardLabel}</span>
           </div>
