@@ -5,7 +5,10 @@ interface PaymentSuccessViewProps {
   onOpenReceipt: () => void;
 }
 
-function PaymentSuccessView({ onReset, onOpenReceipt }: PaymentSuccessViewProps) {
+function PaymentSuccessView({
+  onReset,
+  onOpenReceipt,
+}: PaymentSuccessViewProps) {
   return (
     <>
       <button
